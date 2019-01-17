@@ -24,7 +24,7 @@ ${sessionScope.dbUser.name }
 				<th field="publishdate" width="80">发布日期</th>
 				<th field="browsecount" width="80">浏览次数</th>
 				<th field="name" width="100">发帖人</th>
-			</tr>
+			</tr>哈啊
 		</thead>
 		<tbody>
 			<tr>
