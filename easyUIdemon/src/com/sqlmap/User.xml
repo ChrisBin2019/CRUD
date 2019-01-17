@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap>
+	<!-- 通过typeAlias使得我们在下面使用Student实体类的时候不需要写包名 -->
+	<typeAlias alias="user" type="com.pojo.User" />
+	<resultMap class="user" id="UserResult">    
+        <result property="id" column="id"/>        
+        <result property="name" column="name"/>      
+        <result property="email" column="email"/>       
+        <result property="passWord" column="password"/>        
+    </resultMap>
+	
+	<!-- 这样以后改了sql，就不需要去改java代码了 -->
+	<!-- id表示select里的sql语句，resultClass表示返回结果的类型 -->
+	<select id="selectUser" parameterClass="user" resultClass="user">
+		select id,name,email,password from user 
+		<dynamic prepend="where">  
+            <isNotEmpty prepend="and" property="email">  
+                email=#email#  
+            </isNotEmpty>  
+            <isNotEmpty prepend="and" property="passWord">  
+                password=#passWord#  
+            </isNotEmpty>  
+        </dynamic>  
+	</select>
+
+</sqlMap>

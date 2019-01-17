@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd    
+    http://www.springframework.org/schema/aop    
+    http://www.springframework.org/schema/aop/spring-aop-2.5.xsd   
+    http://www.springframework.org/schema/tx   
+    http://www.springframework.org/schema/tx/spring-tx-2.5.xsd   
+    http://www.springframework.org/schema/context   
+    http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+	<!-- 启动注解 
+	<context:annotation-config></context:annotation-config> 
+	<context:component-scan base-package="com"/> -->
+	
+	<!-- 表示把属性资源文件的信息加载到Spring环境中进行利用 -->
+	<bean id="propertyConfig"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>classpath:db.properties</value>
+		</property>
+	</bean>
+
+	<!--配置一个数据源,根据上面propertyConfig指定的location去找数据库连接的配置信息 -->
+	<!-- dataSource -->  
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">  
+        <property name="driverClassName" value="${driver}" />  
+        <property name="url" value="${url}" />  
+        <property name="username" value="${username}" />  
+        <property name="password" value="${password}" />  
+    </bean> 
+	<!--根据dataSource和configLocation创建一个SqlMapClient -->
+	<!--sqlMapClient  -->  
+    <bean id="sqlMapClient"  class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">  
+        <property name="configLocation" value="classpath:ibatis-config.xml"/>  
+        <property name="dataSource" ref="dataSource" />  
+    </bean>  
+	
+	<bean id="newsDaoImpl" class="com.daoImpl.NewsDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient"></property>
+	</bean>
+	<bean id="newsServiceImpl" class="com.serviceImpl.NewsServiceImpl">
+		<property name="newsDao" ref="newsDaoImpl"></property>
+	</bean>
+	<bean name="/selectNews" class="com.action.IndexAction">
+		<property name="newsService" ref="newsServiceImpl"></property>
+	</bean>
+	
+	
+	<bean id="userDaoImpl" class="com.daoImpl.UserDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient"></property>
+	</bean>
+
+	<bean id="userServiceImpl" class="com.serviceImpl.UserServiceImpl">
+		<property name="userDao" ref="userDaoImpl"></property>
+	</bean>
+
+	<bean name="/login" class="com.action.LoginAction">
+		<property name="userService" ref="userServiceImpl"></property>
+	</bean>
+	
+</beans>  
